@@ -1,0 +1,1 @@
+cmd "/k cd ./code && python test.py"
