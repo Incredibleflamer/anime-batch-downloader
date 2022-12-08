@@ -1,6 +1,7 @@
 import os
 import json
 from subprocess import call
+import subprocess
 files = os.listdir()
 #gettingconfigfiles
 def getConfig():
@@ -40,8 +41,9 @@ if lastanimeep == "0" :
 else :
     rabngetest = "--range " + fromanimeep + "-" + lastanimeep
 
-
 #starting the downloader
 cmdline = "animdl download " + animenamezam + Qualityzam + rabngetest
-dir = "r" + '"' + downloc +'"'
-rc = call("start cmd /K " + cmdline  , cwd=downloc , shell=True )
+dir = downloc
+path = "r" + dir
+os.chdir(dir)
+rc = call("start cmd /K " + cmdline  , cwd=dir , shell=True )
