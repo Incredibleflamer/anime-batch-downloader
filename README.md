@@ -11,9 +11,15 @@ Made this project by using https://github.com/justfoolingaround/animdl
 - [4] Open Downloadlocation.json and paste the location where you want to download your anime 
 - [5] Run start.bat and enjoy downloading anime
 
-## Usage
-if you want to run next time just run start.bat
 
 ## Configurations
 - For Now You Can Only Change The Location Of Anime To Be Downloaded
 - You can use the `downloadlocation.json` to specify where you want to download. just change `D://anime` to where you want to download
+
+https://user-images.githubusercontent.com/84078595/206552277-618b6038-1f5e-43fa-bda6-8a78c096e0d0.mp4
+
+## Usage
+if you want to run next time just run start.bat
+
+https://user-images.githubusercontent.com/84078595/206552665-21afd452-03eb-42f7-ae6f-b94f9309afb5.mp4
+
