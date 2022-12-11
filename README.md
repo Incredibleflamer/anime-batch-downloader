@@ -1,7 +1,6 @@
+# <h1 align="center"> Support Pc Only For Now
 # anime-downloader 
 Made this project by using https://github.com/justfoolingaround/animdl
-
-# support pc only for now
 
 <h1 align="center"><img src="https://capsule-render.vercel.app/api?type=soft&fontColor=703ee5&text=Incredibleflamer/anime-downloader&height=150&fontSize=45&desc=Ridiculously%20efficient,%20fast%20and%20light-weight.&descAlignY=75&descAlign=60&color=00000000&animation=twinkling"></h1>
 <p align="center"><sup>A highly efficient, powerful and fast anime scraper. made with help of https://github.com/justfoolingaround/animdl </sup></p>
