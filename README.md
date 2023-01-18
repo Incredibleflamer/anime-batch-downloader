@@ -9,6 +9,9 @@
 - [4] Open Downloadlocation.json and paste the location where you want to download your anime 
 - [5] Run start.bat and enjoy downloading anime
 
+## Setup video / Usage video
+https://www.youtube.com/embed/RFU5PKq6zDU
+
 
 ## Configurations
 - For Now You Can Only Change The Location Of Anime To Be Downloaded
