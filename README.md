@@ -10,7 +10,7 @@
 - [5] Run start.bat and enjoy downloading anime
 
 ## Setup video / Usage video
-https://www.youtube.com/embed/RFU5PKq6zDU
+https://youtu.be/RFU5PKq6zDU
 
 
 ## Configurations
