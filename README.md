@@ -12,6 +12,9 @@
 ## Setup video / Usage video
 https://youtu.be/RFU5PKq6zDU
 
+##Support
+- [1] Discord Server - https://discord.gg/VX8j6tpYfB
+- [2] Discord User name - broken 888 || モンキー・D・ルフィ#4431
 
 ## Configurations
 - For Now You Can Only Change The Location Of Anime To Be Downloaded
