@@ -34,15 +34,17 @@ except Exception as e:
     print(f'Failed to Fetch data\n{e}')
 
 #some stuff
-Qualityzam = " --quality best "
-animenamezam = '"' + "animepahe:" + animenamezam + '"'
+Qualityzam = " --quality 1080 "
+animenamezam = '"' + animenamezam + '"'
 if lastanimeep == "0" : 
     rabngetest = "--range " + fromanimeep
 else :
     rabngetest = "--range " + fromanimeep + "-" + lastanimeep
 
 #starting the downloader
-cmdline = "animdl download " + animenamezam + Qualityzam + rabngetest
+cmdline = "animdl download " + animenamezam   + rabngetest + Qualityzam
+
+
 dir = downloc
 path = "r" + dir
 os.chdir(dir)
