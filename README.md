@@ -29,3 +29,49 @@
 ```json
 "site" : "gogo"
 ```
+
+### quality 
+
+
+- Currently Supported Quality are : 1080p ,720p , 480p , 360p
+- In config.json you can type
+
+- For 1080p
+```json
+"quality" : "1080p"
+```
+
+- For 720p 
+
+```json
+"quality" : "720p"
+```
+
+- For 480p
+```json
+"quality" : "480p"
+```
+
+- For 360p 
+
+```json
+"quality" : "360p"
+```
+
+### dub or sub download 
+- For downloading English Sub anime 
+```json
+  "dub_sub": "sub",
+```
+
+- For downloading English Dub
+```json
+  "dub_sub": "dub",
+```
+
+### Maximum number of simultaneous downloads
+- For downloading multiple anime ep at a time you can edit this in config.json
+
+```json
+  "simultaneous_downloads": "10",
+```
