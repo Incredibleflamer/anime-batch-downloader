@@ -1,1 +1,1 @@
-cmd "/k cd ./code && python test.py"
+cmd "/k cd ./src && python test.py"
