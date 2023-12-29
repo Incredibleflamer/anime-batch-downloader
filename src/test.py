@@ -73,12 +73,14 @@ for i in list(configdat.keys()):
             value = input(infoColour + f'{i} Till which ep you want to download ( note if you want to download only one ep type here 0 ) : ')
             if value.isdigit() and (value == '0'):
                 print(infoColour + f'Downloading Ep {configdat["FROM_EP"]}')
+                configdat[i] = '0'
                 exit_outer_loop = True
                 break  
             elif value.isdigit() and int(configdat['FROM_EP']) > int(value):
                 print(notecolour + f'Error: FROM_EP cannot be greater than LAST_EP.')
             elif value.isdigit() and int(value) > 0:
                 print(infoColour + f'Downloading From Ep {configdat["FROM_EP"]} to {value}')
+                configdat[i] = value
                 exit_outer_loop = True
                 break 
             else:

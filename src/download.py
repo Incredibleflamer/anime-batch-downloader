@@ -49,6 +49,7 @@ else :
     endzam = " --end_episode " + lastanimeep
     command_execute = "senpcli.exe" + sitezam + Qualityzam + dub_subzam + simultaneous_downloadszam + startzam + endzam +  " " + animenamezam
 
+print(command_execute)
 current_directory = os.getcwd() + "\downloader"
 os.chdir(current_directory)
 rc = call("start cmd /K " + command_execute, cwd=current_directory, shell=True)
