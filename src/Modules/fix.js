@@ -5,6 +5,7 @@ const { spawn } = require("child_process");
 function fix() {
   const filePath = path.join(
     __dirname,
+    "..",
     "node_modules",
     "@consumet",
     "extensions",
