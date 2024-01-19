@@ -49,7 +49,10 @@ This is a Node.js-based anime downloader that allows you to download anime episo
 **Note:** Ensure that the MyAnimeList ID and password provided in the `config.yaml` file are correct for automatic addition to your MyAnimeList account.
 
 ## Video
-🎥 Coming Soon..
+
+
+https://github.com/Incredibleflamer/anime-batch-downloader/assets/84078595/6d23958d-e119-44bc-8778-d73c7530f864
+
 
 ## Configuration⚙️
 Before using the anime downloader, make sure to configure the `config.yaml` file located in the project root.
