@@ -12,19 +12,6 @@ async function maladd(title, id, pass) {
   const yaml = require("js-yaml");
   try {
     const acount = await auth.Unstable.login(id, pass);
-    console.log(acount);
-    if (
-      !acount ||
-      !acount.user ||
-      !acount.user.acount ||
-      !acount.user.acount.malToken ||
-      !acount.user.acount.malToken.access_token
-    ) {
-      throw new Error(
-        "Invalid credentials. Please check your MyAnimeList ID and password."
-      );
-    }
-
     const accessToken = acount.user.acount.malToken.access_token;
     const headers = {
       Authorization: `Bearer ${accessToken}`,
@@ -67,8 +54,6 @@ async function maladd(title, id, pass) {
         `${tocheckanime}?fields=${fields.join(",")}`,
         { headers }
       );
-
-      console.log(response);
 
       if (response.data.my_list_status) {
         console.log(
