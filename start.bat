@@ -1,1 +1,0 @@
-cmd "/k cd ./src && python test.py"
