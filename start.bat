@@ -1,24 +1,19 @@
 @echo off
+setlocal EnableExtensions DisableDelayedExpansion
 
-rem Check if Node.js is installed
-where node > nul 2>&1
-if %errorlevel% neq 0 (
-    echo Node.js not found. Please install Node.js by visiting https://nodejs.org/en/
-    start https://nodejs.org/en/
-    exit /b 1
-)
+set "output_cnt=0"
+set "currentDir=%CD%"
 
-rem Check if npm is installed
-where npm > nul 2>&1
-if %errorlevel% neq 0 (
-    echo npm not found. Installing npm...
-    start https://www.npmjs.com/get-npm
-    exit /b 1
-)
+for /f "delims=" %%b in ('node -v 2^>nul') do set "nodeV=%%b"
 
-if exist ".\src\node_modules" (
-    cmd "/k cd ./src && node ."
+if defined nodeV (
+    if not exist "%currentDir%\src\node_modules\" (
+        start cmd /k "cd /d %currentDir%\src && npm install && node ."
+    ) else (
+        start cmd /k "cd /d %currentDir%\src && node ."
+    )
 ) else (
-    echo Node modules not found. Installing dependencies and running the application...
-    cmd "/k cd ./src && npm install && node ."
+    start cmd /k "cd /d %currentDir%\src"
+    start https://nodejs.org/en
 )
+

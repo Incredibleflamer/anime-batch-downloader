@@ -1,14 +1,11 @@
+# Set to true if you want to add anime to your MyAnimeList account.
+# Your MyAnimeList ID.
+# Your MyAnimeList password.
+# Set the quality to download.
+# Options: 1080p, 720p, 360p, default, backup
 mal:
-  # Set to true if you want to add anime to your MyAnimeList account.
-  add_to_mal: true
-
-  # Your MyAnimeList ID.
+  add_to_mal: false
   mal_id: __kowareta__
-
-  # Your MyAnimeList password.
   mal_pass: ZAf9S4UHomfW
-
 configs:
-  # Set the quality to download.
-  # Options: 1080p, 720p, 360p, default, backup
   quality: 1080p
