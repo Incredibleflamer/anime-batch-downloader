@@ -1,0 +1,24 @@
+{
+  "name": "anime_downloader_incredibleflamer",
+  "version": "3.0.0",
+  "description": "download anime in batches & its fast :3",
+  "main": "index.js",
+  "scripts": {
+    "test": "npm install"
+  },
+  "keywords": [
+    "anime",
+    "animedownloader",
+    "animebatchdownloader"
+  ],
+  "author": "Incredibleflamer",
+  "license": "ISC",
+  "dependencies": {
+    "@consumet/extensions": "^1.5.4",
+    "chalk": "^4.1.2",
+    "js-yaml": "^4.1.0",
+    "node-hls-downloader": "^2.2.0",
+    "node-myanimelist": "^4.1.2",
+    "progress": "^2.0.3"
+  }
+}
