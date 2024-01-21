@@ -1,5 +1,6 @@
-async function maladd(title, id, pass) {
+async function maladd(title, id, pass, status) {
   title = await title.replace("(Dub)", "");
+  status = status || "plan_to_watch";
   const axios = require("axios");
   const { Mal } = require("node-myanimelist");
   const { ANIME } = require("@consumet/extensions");
@@ -61,7 +62,8 @@ async function maladd(title, id, pass) {
         );
       } else {
         const data = new URLSearchParams();
-        data.append("status", "plan_to_watch");
+        data.append("status", status);
+        // watching , completed , on_hold , dropped , plan_to_watch
         await axios.put(toaddanime, data, { headers });
         console.log(successColour(`Added: ${animename} to plan to watch list`));
       }

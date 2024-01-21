@@ -4,8 +4,9 @@ const path = require("path");
 const { ANIME } = require("@consumet/extensions");
 const gogoanime = new ANIME.Gogoanime();
 const HLSLogger = require("./HLSLogger");
+let epsdownloaded = 0;
 // dir maker
-async function directoryMaker(title) {
+async function directoryMaker(title, ep) {
   //Anime dir
   const animeDirectory = "../Anime";
   try {
@@ -23,18 +24,18 @@ async function directoryMaker(title) {
   await fs.mkdir(directoryPath).catch((err) => {
     if (err.code !== "EEXIST") throw err;
   });
-  //Temp Dir
-  const tempdir = "./Temps";
+  //Temp of eps
+  const tempeps = path.join(animeDirectory, directoryName, `Temp_${ep}/`);
   try {
-    await fs.access(tempdir);
+    await fs.access(tempeps);
   } catch (error) {
     if (error.code === "ENOENT") {
-      await fs.mkdir(tempdir);
+      await fs.mkdir(tempeps);
     } else {
       throw error;
     }
   }
-  return [directoryName];
+  return [directoryName, tempeps];
 }
 
 async function fetchEpisodeSources(episodeId) {
@@ -47,7 +48,8 @@ async function downloadEpisodeByQuality(
   userSelectedQuality,
   preferredQualities,
   episodeNumber,
-  directoryName
+  directoryName,
+  tempname
 ) {
   let selectedSource = sourcesArray.find(
     (source) => source.quality === userSelectedQuality
@@ -65,7 +67,13 @@ async function downloadEpisodeByQuality(
   }
 
   if (selectedSource) {
-    await downloadVideo(selectedSource.url, directoryName, episodeNumber);
+    await downloadVideo(
+      selectedSource.url,
+      directoryName,
+      episodeNumber,
+      tempname,
+      selectedSource.quality
+    );
   } else {
     console.log(`No Video found for episode ${episodeNumber}`);
   }
@@ -73,62 +81,85 @@ async function downloadEpisodeByQuality(
 
 // download 1 ep
 async function download1Episode(animeInfo, eptodownload, config) {
-  const [directoryName] = await directoryMaker(animeInfo.title);
   const targetEpisode = animeInfo.episodes.find(
     (episode) => episode.number === eptodownload
   );
-
   if (targetEpisode) {
+    const [directoryName, tempname] = await directoryMaker(
+      animeInfo.title,
+      eptodownload
+    );
     const sourcesArray = await fetchEpisodeSources(targetEpisode.id);
     await downloadEpisodeByQuality(
       sourcesArray,
       config.configs.quality,
       ["1080p", "720p", "360p", "default", "backup"],
       targetEpisode.number,
-      directoryName
+      directoryName,
+      tempname
     );
+    return epsdownloaded;
   } else {
     console.log(`Episode ${eptodownload} not found`);
+    return epsdownloaded;
   }
 }
 
 // download from ep to ep
 async function downloadfromtosomewhere(animeInfo, from, till, config) {
-  const [directoryName] = await directoryMaker(animeInfo.title);
-
   for (const currentEpisode of animeInfo.episodes) {
     if (currentEpisode.number >= from && currentEpisode.number <= till) {
+      const [directoryName, tempname] = await directoryMaker(
+        animeInfo.title,
+        currentEpisode.number
+      );
       const sourcesArray = await fetchEpisodeSources(currentEpisode.id);
       await downloadEpisodeByQuality(
         sourcesArray,
         config.configs.quality,
         ["1080p", "720p", "360p", "default", "backup"],
         currentEpisode.number,
-        directoryName
+        directoryName,
+        tempname
       );
     }
   }
+  return epsdownloaded;
 }
 
 // download all ep
 async function downloadAllEpisodes(animeInfo, config) {
-  const [directoryName] = await directoryMaker(animeInfo.title);
-
   for (const currentEpisode of animeInfo.episodes) {
+    const [directoryName, tempname] = await directoryMaker(
+      animeInfo.title,
+      currentEpisode.number
+    );
     const sourcesArray = await fetchEpisodeSources(currentEpisode.id);
     await downloadEpisodeByQuality(
       sourcesArray,
       config.configs.quality,
       ["1080p", "720p", "360p", "default", "backup"],
       currentEpisode.number,
-      directoryName
+      directoryName,
+      tempname
     );
   }
+  return epsdownloaded;
 }
 
 // download ep
-async function downloadVideo(Url, directoryName, episodeNumber) {
-  const hlsLogger = new HLSLogger(`Downloading EP ${episodeNumber}`, 0, false);
+async function downloadVideo(
+  Url,
+  directoryName,
+  episodeNumber,
+  tempname,
+  quality
+) {
+  const hlsLogger = new HLSLogger(
+    `Downloading EP ${episodeNumber} [  ${quality}  ]`,
+    0,
+    false
+  );
 
   const outputFile = path.join(
     __dirname,
@@ -147,12 +178,40 @@ async function downloadVideo(Url, directoryName, episodeNumber) {
     streamUrl: Url,
     ffmpegPath: "./Modules/ffmpeg.exe",
     logger: hlsLogger.logger,
-    segmentsDir: "./Temps/",
+    segmentsDir: tempname,
   });
+  epsdownloaded += 1;
 }
+// time calculation
+async function timeittook(title, startTime, epsdownloaded) {
+  const endTime = performance.now();
+  const elapsedTime = endTime - startTime;
 
+  const seconds = Math.floor((elapsedTime / 1000) % 60);
+  const minutes = Math.floor((elapsedTime / (1000 * 60)) % 60);
+  const hours = Math.floor(elapsedTime / (1000 * 60 * 60));
+
+  const formattedSeconds = seconds.toFixed(2);
+
+  let timeMessage = `Downloaded ${title} | ( ${epsdownloaded} Eps ) in : `;
+
+  if (hours > 0) {
+    timeMessage += `${hours} hour${hours > 1 ? "s" : ""} `;
+  }
+
+  if (minutes > 0) {
+    timeMessage += `${minutes} minute${minutes > 1 ? "s" : ""} `;
+  }
+
+  timeMessage += `${formattedSeconds} second${
+    formattedSeconds !== "1.00" ? "s" : ""
+  }`;
+
+  return timeMessage;
+}
 module.exports = {
   downloadfromtosomewhere,
   download1Episode,
   downloadAllEpisodes,
+  timeittook,
 };

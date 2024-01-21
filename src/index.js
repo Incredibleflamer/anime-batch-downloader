@@ -19,6 +19,7 @@ const {
   downloadfromtosomewhere,
   download1Episode,
   downloadAllEpisodes,
+  timeittook,
 } = require("./Modules/download");
 // config
 const yaml = require("js-yaml");
@@ -32,25 +33,33 @@ let config;
   console.log(
     baseColour(
       `
-    ___   _   _ ________  ___ _____  ______ _____  _    _ _   _  _     _____  ___ ______ ___________ 
-   / _ \\ | \\ | |_   _|  \\/  ||  ___| |  _  \\  _  || |  | | \\ | || |   |  _  |/ _ \\|  _  \\  ___| ___ \\
-  / /_\\ \\| \\| | | | | .  . || |__   | | | | | | || |  | |  \\| || |   | | | / /_\\ \\ | | | |__ | |_/ /
-  |  _  || . \` | | | | |\\/| ||  __|  | | | | | | || |\\| | . \` || |   | | | |  _  | | | |  __||    / 
-  | | | || |\\  |_| |_| |  | || |___  | |/ /\\ \\_/ /\\  /\\  / |\\  || |___\\ \\_/ / | | | |/ /| |___| |\\ \\ 
-  \\_| |_/\_| \\_/\\___/\\_|  |_/\____/  |___/  \\___/  \\/  \\/\\_| \\_/\\_____/\\___/\\_| |_/___/ \\____/\\_| \\_|
-                                                                                    
-                                                                                                  \nMade by - Incredible Flamers\nVersion: 3.0\n`
+      ___   _   _ ________  ___ _____  ______ _____  _    _ _   _  _     _____  ___ ______ ___________ 
+     / _ \\ | \\ | |_   _|  \\/  ||  ___| |  _  \\  _  || |  | | \\ | || |   |  _  |/ _ \\|  _  \\  ___| ___ \\
+    / /_\\ \\| \\| | | | | .  . || |__   | | | | | | || |  | |  \\| || |   | | | / /_\\ \\ | | | |__ | |_/ /
+    |  _  || . \` | | | | |\\/| ||  __|  | | | | | | || |\\| | . \` || |   | | | |  _  | | | |  __||    / 
+    | | | || |\\  |_| |_| |  | || |___  | |/ /\\ \\_/ /\\  /\\  / |\\  || |___\\ \\_/ / | | | |/ /| |___| |\\ \\ 
+    \\_| |_/\_| \\_/\\___/\\_|  |_/\____/  |___/  \\___/  \\/  \\/\\_| \\_/\\_____/\\___/\\_| |_/___/ \\____/\\_| \\_|
+                                                                                      
+                                                                                                    \nMade by - Incredible Flamers\nVersion: 3.0\n`
     )
   );
 
+  animename();
+})();
+
+async function animename() {
   rl.question(infoColour(`Enter Anime Name : `), (Anime_NAME) => {
     clearConsole();
     searchAnime(Anime_NAME);
   });
-})();
+}
 
 // Functions
 function searchAnime(Anime_NAME) {
+  if (!Anime_NAME || Anime_NAME === undefined) {
+    console.log(notecolour("Enter A Anime Name!"));
+    return animename();
+  }
   const formattedAnimeName = Anime_NAME.replace(/\w\S*/g, (word) => {
     return word.charAt(0).toUpperCase() + word.slice(1).toLowerCase();
   });
@@ -158,7 +167,7 @@ function promptUser(data, Anime_NAME, next, back) {
           );
           id = config.mal.mal_id;
           pass = config.mal.mal_pass;
-          await maladd(selectedAnime.title, id, pass);
+          await maladd(selectedAnime.title, id, pass, config.mal.status_add);
         }
         geteps(selectedAnime.id);
       } else if (next && userInput == next && data.hasNextPage) {
@@ -189,146 +198,169 @@ async function geteps(Anime_ID) {
     return;
   }
 
-  console.log(infoColour(`1] Download All Eps`));
-  console.log(infoColour(`2] Download one Ep`));
-
   if (animeInfo.totalEpisodes > 2) {
+    console.log(infoColour(`1] Download All Eps`));
+    console.log(infoColour(`2] Download one Ep`));
     console.log(infoColour(`3] Download From Specific Ep`));
-  }
+    let startTime;
+    let epsdownloaded;
+    rl.question(
+      successColour(`\nEnter Number what you wanna do: `),
+      async (userChoice) => {
+        switch (userChoice) {
+          case "1":
+            startTime = performance.now();
+            console.log(infoColour(`Downloading all episodes...`));
+            epsdownloaded = await downloadAllEpisodes(animeInfo, config);
+            break;
+          case "2":
+            if (!rl.closed) {
+              let isValidInput = false;
 
-  rl.question(
-    successColour(`\nEnter Number what you wanna do: `),
-    async (userChoice) => {
-      switch (userChoice) {
-        case "1":
-          console.log(infoColour(`Downloading all episodes...`));
-          downloadAllEpisodes(animeInfo, config);
-          break;
-        case "2":
-          if (!rl.closed) {
-            let isValidInput = false;
+              const askForEpisode = async () => {
+                const epNumber = await new Promise((resolve) => {
+                  rl.question(
+                    infoColour(
+                      `Enter the episode number (1 - ${animeInfo.totalEpisodes}): `
+                    ),
+                    resolve
+                  );
+                });
 
-            const askForEpisode = async () => {
-              const epNumber = await new Promise((resolve) => {
-                rl.question(
-                  infoColour(
-                    `Enter the episode number (1 - ${animeInfo.totalEpisodes}): `
-                  ),
-                  resolve
-                );
-              });
+                const episode = parseInt(epNumber, 10);
 
-              const episode = parseInt(epNumber, 10);
+                if (
+                  !isNaN(episode) &&
+                  episode >= 1 &&
+                  episode <= animeInfo.totalEpisodes
+                ) {
+                  isValidInput = true;
+                  startTime = performance.now();
+                  epsdownloaded = await download1Episode(
+                    animeInfo,
+                    episode,
+                    config
+                  );
+                } else {
+                  console.error(
+                    notecolour(
+                      `Invalid input. Please enter a valid episode number.`
+                    )
+                  );
+                  await askForEpisode();
+                }
+              };
 
-              if (
-                !isNaN(episode) &&
-                episode >= 1 &&
-                episode <= animeInfo.totalEpisodes
-              ) {
-                download1Episode(animeInfo, episode, config);
-                isValidInput = true;
-              } else {
-                console.error(
-                  notecolour(
-                    `Invalid input. Please enter a valid episode number.`
-                  )
-                );
-                await askForEpisode();
-              }
-            };
+              await askForEpisode();
+            }
+            break;
 
-            await askForEpisode();
-          }
-          break;
+          case "3":
+            if (animeInfo.totalEpisodes < 2) {
+              clearConsole();
+              geteps(Anime_ID);
+              break;
+            }
+            if (!rl.closed) {
+              let isValidInput = false;
 
-        case "3":
-          if (animeInfo.totalEpisodes < 2) {
+              const askForStartEpisode = async () => {
+                const startNumber = await new Promise((resolve) => {
+                  rl.question(
+                    infoColour(
+                      `Enter the starting episode number (1 - ${animeInfo.totalEpisodes}): `
+                    ),
+                    resolve
+                  );
+                });
+
+                const startEpisode = parseInt(startNumber, 10);
+
+                if (
+                  !isNaN(startEpisode) &&
+                  startEpisode >= 1 &&
+                  startEpisode <= animeInfo.totalEpisodes
+                ) {
+                  const askForEndEpisode = async () => {
+                    const endNumber = await new Promise((resolve) => {
+                      rl.question(
+                        infoColour(
+                          `Enter the ending episode number (${startEpisode} - ${animeInfo.totalEpisodes}): `
+                        ),
+                        resolve
+                      );
+                    });
+
+                    const endEpisode = parseInt(endNumber, 10);
+
+                    if (
+                      !isNaN(endEpisode) &&
+                      endEpisode >= startEpisode &&
+                      endEpisode <= animeInfo.totalEpisodes
+                    ) {
+                      console.log(
+                        infoColour(
+                          `Downloading episodes from ${startEpisode} to ${endEpisode}...`
+                        )
+                      );
+                      isValidInput = true;
+                      startTime = performance.now();
+                      epsdownloaded = await downloadfromtosomewhere(
+                        animeInfo,
+                        startEpisode,
+                        endEpisode,
+                        config
+                      );
+                    } else {
+                      console.error(
+                        notecolour(
+                          `Invalid input. Please enter a valid ending episode number.`
+                        )
+                      );
+                      await askForStartEpisode();
+                    }
+                  };
+
+                  await askForEndEpisode();
+                } else {
+                  console.error(
+                    notecolour(
+                      `Invalid input. Please enter a valid starting episode number.`
+                    )
+                  );
+                  rl.close();
+                }
+              };
+
+              await askForStartEpisode();
+            }
+            break;
+
+          default:
+            console.error(
+              notecolour(`Invalid input. Please enter a valid number.`)
+            );
             clearConsole();
             geteps(Anime_ID);
             break;
-          }
-          if (!rl.closed) {
-            let isValidInput = false;
-
-            const askForStartEpisode = async () => {
-              const startNumber = await new Promise((resolve) => {
-                rl.question(
-                  infoColour(
-                    `Enter the starting episode number (1 - ${animeInfo.totalEpisodes}): `
-                  ),
-                  resolve
-                );
-              });
-
-              const startEpisode = parseInt(startNumber, 10);
-
-              if (
-                !isNaN(startEpisode) &&
-                startEpisode >= 1 &&
-                startEpisode <= animeInfo.totalEpisodes
-              ) {
-                const askForEndEpisode = async () => {
-                  const endNumber = await new Promise((resolve) => {
-                    rl.question(
-                      infoColour(
-                        `Enter the ending episode number (${startEpisode} - ${animeInfo.totalEpisodes}): `
-                      ),
-                      resolve
-                    );
-                  });
-
-                  const endEpisode = parseInt(endNumber, 10);
-
-                  if (
-                    !isNaN(endEpisode) &&
-                    endEpisode >= startEpisode &&
-                    endEpisode <= animeInfo.totalEpisodes
-                  ) {
-                    console.log(
-                      infoColour(
-                        `Downloading episodes from ${startEpisode} to ${endEpisode}...`
-                      )
-                    );
-                    downloadfromtosomewhere(
-                      animeInfo,
-                      startEpisode,
-                      endEpisode,
-                      config
-                    );
-                    isValidInput = true;
-                  } else {
-                    console.error(
-                      notecolour(
-                        `Invalid input. Please enter a valid ending episode number.`
-                      )
-                    );
-                    await askForStartEpisode();
-                  }
-                };
-
-                await askForEndEpisode();
-              } else {
-                console.error(
-                  notecolour(
-                    `Invalid input. Please enter a valid starting episode number.`
-                  )
-                );
-                rl.close();
-              }
-            };
-
-            await askForStartEpisode();
-          }
-          break;
-
-        default:
-          console.error(
-            notecolour(`Invalid input. Please enter a valid number.`)
-          );
-          clearConsole();
-          geteps(Anime_ID);
-          break;
+        }
+        const timetook = await timeittook(
+          animeInfo.title,
+          startTime,
+          epsdownloaded
+        );
+        console.log(successColour(timetook));
       }
-    }
-  );
+    );
+  } else {
+    startTime = performance.now();
+    console.log(infoColour(`Downloading 1 episode...`));
+    epsdownloaded = await downloadAllEpisodes(animeInfo, config);
+    const timetook = await timeittook(
+      animeInfo.title,
+      startTime,
+      epsdownloaded
+    );
+    console.log(successColour(timetook));
+  }
 }
